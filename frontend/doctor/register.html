@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Doctor Portal Registration - MediConnect">
+    <title>Doctor Registration - MediConnect</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-card">
+            <!-- Back to Home -->
+            <a href="/index.html" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--gray-600); font-weight: 500; font-size: 14px; margin-bottom: var(--space-4); transition: color 0.3s ease;" onmouseover="this.style.color='var(--primary-600)'" onmouseout="this.style.color='var(--gray-600)'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+
+            <!-- Logo -->
+            <div class="logo" style="justify-content: flex-start;">
+                <div class="logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                                 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                                 C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                                 c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Medi<span class="logo-highlight">Connect</span></span>
+            </div>
+
+            <h2 class="portal-title">Doctor Registration</h2>
+            <p class="portal-subtitle">Create an account to join our medical platform</p>
+
+            <!-- Register Form -->
+            <form class="login-form" id="doctorRegisterForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <div class="form-input-icon">
+                        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <input type="text" class="form-input" id="regDoctorName" placeholder="Dr. John Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <div class="form-input-icon">
+                        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        <input type="email" class="form-input" id="regDoctorEmail" placeholder="you@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <div class="form-input-icon">
+                        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                        <input type="text" class="form-input" id="regDoctorPhone" placeholder="(555) 123-4567" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Specialization</label>
+                    <select class="form-input" id="regDoctorSpecialization" required style="padding-left: 15px;" onchange="toggleNewSpecialization()">
+                        <option value="">Select Specialization</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="newSpecializationGroup" style="display: none;">
+                    <label class="form-label">Add New Specialization</label>
+                    <input type="text" class="form-input" id="regNewSpecialization" placeholder="Enter your specialization" style="padding-left: 15px;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Qualification</label>
+                    <input type="text" class="form-input" id="regDoctorQualification" placeholder="e.g. MBBS, MD" required style="padding-left: 15px;">
+                </div>
+
+                <div class="form-group" style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label class="form-label">Experience (Yrs)</label>
+                        <input type="number" class="form-input" id="regDoctorExperience" placeholder="e.g. 5" min="0" required style="padding-left: 15px;">
+                    </div>
+                    <div style="flex:1;">
+                        <label class="form-label">Fee (₹)</label>
+                        <input type="number" class="form-input" id="regDoctorFee" placeholder="e.g. 500" min="0" required style="padding-left: 15px;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="form-input-icon">
+                        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input type="password" class="form-input" id="regDoctorPassword" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="doctorRegisterBtn">Create Account</button>
+
+                <p class="register-text mt-6">
+                    Already have an account? <a href="/doctor/login.html">Sign In</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+    <script>
+        function toggleNewSpecialization() {
+            const select = document.getElementById('regDoctorSpecialization');
+            const newGroup = document.getElementById('newSpecializationGroup');
+            const newInput = document.getElementById('regNewSpecialization');
+            if (select.value === 'other') {
+                newGroup.style.display = 'block';
+                newInput.required = true;
+            } else {
+                newGroup.style.display = 'none';
+                newInput.required = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const data = await apiGet('/specializations');
+                const select = document.getElementById('regDoctorSpecialization');
+                data.specializations.forEach(spec => {
+                    select.innerHTML += `<option value="${spec.id}">${spec.name}</option>`;
+                });
+                select.innerHTML += `<option value="other">Other (Add New)</option>`;
+            } catch (err) {
+                console.error("Failed to load specializations", err);
+            }
+        });
+
+        document.getElementById('doctorRegisterForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('doctorRegisterBtn');
+            btn.disabled = true;
+            btn.textContent = 'Registering...';
+
+            try {
+                let specId = document.getElementById('regDoctorSpecialization').value;
+
+                // Handle 'Other' specialization
+                if (specId === 'other') {
+                    const newSpecName = document.getElementById('regNewSpecialization').value.trim();
+                    if (!newSpecName) throw new Error("Please enter a new specialization name");
+                    
+                    // Create new specialization via API
+                    const specRes = await apiPost('/specializations', { name: newSpecName, description: 'Added during registration' });
+                    specId = specRes.specialization.id;
+                } else {
+                    specId = parseInt(specId);
+                }
+
+                const payload = {
+                    full_name: document.getElementById('regDoctorName').value.trim(),
+                    email: document.getElementById('regDoctorEmail').value.trim(),
+                    phone: document.getElementById('regDoctorPhone').value.trim(),
+                    password: document.getElementById('regDoctorPassword').value,
+                    specialization_id: specId,
+                    qualification: document.getElementById('regDoctorQualification').value.trim(),
+                    experience_years: parseInt(document.getElementById('regDoctorExperience').value),
+                    consultation_fee: parseFloat(document.getElementById('regDoctorFee').value)
+                };
+
+                await apiPost('/auth/doctor/register', payload);
+                showToast('Registration successful! Please login.', 'success');
+                setTimeout(() => { window.location.href = '/doctor/login.html'; }, 1500);
+            } catch (error) {
+                showToast(error.message || 'Registration failed', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Create Account';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<mxfile host="app.diagrams.net" modified="2026-04-30T09:15:00.000Z" agent="MediConnect Agent" version="21.0.0" type="device">
+  <!-- Page 1: Context Level DFD (Level 0) -->
+  <diagram name="1. Context DFD (Level 0)" id="dfd0">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p_top" value="0" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=2;verticalAlign=bottom;spacingBottom=20;" vertex="1" parent="1"><mxGeometry x="320" y="240" width="160" height="160" as="geometry" /></mxCell>
+        <mxCell id="p_line" value="" style="endArrow=none;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;strokeWidth=2;" edge="1" parent="1" source="p_top" target="p_top"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p_bot" value="MediConnect&lt;br&gt;Management&lt;br&gt;System" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="1"><mxGeometry x="340" y="320" width="120" height="60" as="geometry" /></mxCell>
+        <mxCell id="ent" value="Patient / Doctor /&lt;br&gt;Administrator" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fontStyle=1" vertex="1" parent="1"><mxGeometry x="40" y="280" width="140" height="80" as="geometry" /></mxCell>
+        <mxCell id="db" value="Database&lt;br&gt;(MySQL)" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=1;right=1;fillColor=none;strokeWidth=2;fontStyle=1" vertex="1" parent="1"><mxGeometry x="640" y="280" width="140" height="80" as="geometry" /></mxCell>
+        <mxCell id="f1" value="Login Request" style="endArrow=classic;html=1;exitX=1;exitY=0.25;entryX=0;entryY=0.35;" edge="1" parent="1" source="ent" target="p_top"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f2" value="Booking Details" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="ent" target="p_top"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f3" value="View Reports" style="endArrow=classic;html=1;exitX=0;exitY=0.65;entryX=1;entryY=0.75;" edge="1" parent="1" source="p_top" target="ent"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f4" value="Stores User &amp; Appt Data" style="endArrow=classic;html=1;exitX=1;exitY=0.35;entryX=0;entryY=0.25;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="p_top" target="db"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f5" value="Retrieves Data for Reporting" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="db" target="p_top"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- Page 2: First Level DFD (Reference Match) -->
+  <diagram name="2. First Level DFD" id="dfd1">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Large User Bar on Left -->
+        <mxCell id="user_bar" value="&lt;b&gt;User / Admin&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="100" height="740" as="geometry" />
+        </mxCell>
+
+        <!-- Column 1: Processes (Ovals) -->
+        <mxCell id="p1" value="Login / Auth" style="ellipse;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="400" y="60" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="p2" value="Search Specialization" style="ellipse;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="400" y="160" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="p3" value="Search Doctors" style="ellipse;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="400" y="260" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="p4" value="Book Appointment" style="ellipse;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="400" y="360" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="p5" value="Update Appt Status" style="ellipse;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="400" y="460" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="p6" value="Manage Doctors" style="ellipse;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="400" y="560" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="p7" value="Generate Reports" style="ellipse;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="400" y="660" width="160" height="60" as="geometry" /></mxCell>
+
+        <!-- Column 2: Databases (Rectangles) -->
+        <mxCell id="db1" value="User Database" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="840" y="60" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="db2" value="Specialization DB" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="840" y="160" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="db3" value="Doctor DB" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="840" y="260" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="db4" value="Appointment DB" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="840" y="410" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="db5" value="Admin Logs DB" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="840" y="610" width="160" height="60" as="geometry" /></mxCell>
+
+        <!-- User to Processes Connections -->
+        <mxCell id="f1a" value="Request for Login" style="endArrow=classic;html=1;exitX=1;exitY=0.05;entryX=0;entryY=0.35;" edge="1" parent="1" source="user_bar" target="p1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f1b" value="Request Accepted" style="endArrow=classic;html=1;exitX=0;exitY=0.1;entryX=1;entryY=0.1;" edge="1" parent="1" source="p1" target="user_bar"><mxGeometry relative="1" as="geometry" /></mxCell>
+        
+        <mxCell id="f2a" value="Browse Specializations" style="endArrow=classic;html=1;exitX=1;exitY=0.18;entryX=0;entryY=0.35;" edge="1" parent="1" source="user_bar" target="p2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f2b" value="Display Results" style="endArrow=classic;html=1;exitX=0;exitY=0.65;entryX=1;entryY=0.22;" edge="1" parent="1" source="p2" target="user_bar"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="f4a" value="Submit Booking" style="endArrow=classic;html=1;exitX=1;exitY=0.45;entryX=0;entryY=0.35;" edge="1" parent="1" source="user_bar" target="p4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f4b" value="Booking ID / Status" style="endArrow=classic;html=1;exitX=0;exitY=0.65;entryX=1;entryY=0.5;" edge="1" parent="1" source="p4" target="user_bar"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Processes to Database Connections -->
+        <mxCell id="d1a" value="Request" style="endArrow=classic;html=1;exitX=1;exitY=0.25;entryX=0;entryY=0.25;" edge="1" parent="1" source="p1" target="db1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d1b" value="Response" style="endArrow=classic;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.75;" edge="1" parent="1" source="db1" target="p1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        
+        <mxCell id="d2a" value="Query" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2" target="db2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d4a" value="Save" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="p4" target="db4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d5a" value="Update" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.75;" edge="1" parent="1" source="p5" target="db4"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- Page 3: Entity Relationship Diagram -->
+  <diagram name="3. ER Diagram" id="erdChen">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="E1" value="DOCTOR" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fontStyle=1" vertex="1" parent="1"><mxGeometry x="340" y="240" width="120" height="50" as="geometry" /></mxCell>
+        <mxCell id="R1" value="has" style="rhombus;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="360" y="120" width="80" height="60" as="geometry" /></mxCell>
+        <mxCell id="E2" value="SPECIALIZATION" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fontStyle=1" vertex="1" parent="1"><mxGeometry x="340" y="40" width="120" height="50" as="geometry" /></mxCell>
+        <mxCell id="L1" value="1" style="endArrow=none;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="E2" target="R1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="L2" value="M" style="endArrow=none;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="R1" target="E1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="attr1" value="id" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="480" y="200" width="80" height="40" as="geometry" /></mxCell>
+        <mxCell id="attr2" value="full_name" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="480" y="250" width="80" height="40" as="geometry" /></mxCell>
+        <mxCell id="L3" value="" style="endArrow=none;html=1;exitX=1;exitY=0.25;entryX=0;entryY=0.5;" edge="1" parent="1" source="E1" target="attr1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="L4" value="" style="endArrow=none;html=1;exitX=1;exitY=0.75;entryX=0;entryY=0.5;" edge="1" parent="1" source="E1" target="attr2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="E3" value="APPOINTMENT" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;fontStyle=1" vertex="1" parent="1"><mxGeometry x="340" y="440" width="120" height="50" as="geometry" /></mxCell>
+        <mxCell id="R2" value="treats" style="rhombus;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="360" y="340" width="80" height="60" as="geometry" /></mxCell>
+        <mxCell id="L5" value="1" style="endArrow=none;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="E1" target="R2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="L6" value="M" style="endArrow=none;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="R2" target="E3"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- Page 4: Use Case Diagram -->
+  <diagram name="4. Use Case Diagram" id="ucStyle">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="box" value="MediConnect Platform System" style="swimlane;whiteSpace=wrap;html=1;startSize=30;" vertex="1" parent="1"><mxGeometry x="320" y="40" width="400" height="640" as="geometry" /></mxCell>
+        <mxCell id="u1" value="Login / Authenticate" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="box"><mxGeometry x="100" y="40" width="200" height="40" as="geometry" /></mxCell>
+        <mxCell id="u2" value="View Dashboard" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="box"><mxGeometry x="100" y="90" width="200" height="40" as="geometry" /></mxCell>
+        <mxCell id="u3" value="Manage Patients &amp; Doctors" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="box"><mxGeometry x="100" y="140" width="200" height="40" as="geometry" /></mxCell>
+        <mxCell id="u4" value="Book Appointments" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="box"><mxGeometry x="100" y="190" width="200" height="40" as="geometry" /></mxCell>
+        <mxCell id="u5" value="Configure Specializations" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="box"><mxGeometry x="100" y="240" width="200" height="40" as="geometry" /></mxCell>
+        <mxCell id="u6" value="Approve / Cancel Appt" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="box"><mxGeometry x="100" y="290" width="200" height="40" as="geometry" /></mxCell>
+        <mxCell id="u7" value="Generate Reports" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="box"><mxGeometry x="100" y="340" width="200" height="40" as="geometry" /></mxCell>
+        <mxCell id="u8" value="View Analytics" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="box"><mxGeometry x="100" y="390" width="200" height="40" as="geometry" /></mxCell>
+        <mxCell id="act" value="Staff / Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1"><mxGeometry x="100" y="280" width="40" height="80" as="geometry" /></mxCell>
+        <mxCell id="conn1" value="" style="endArrow=none;html=1;exitX=1;exitY=0.33;entryX=0;entryY=0.5;" edge="1" parent="1" source="act" target="u1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="conn2" value="" style="endArrow=none;html=1;exitX=1;exitY=0.33;entryX=0;entryY=0.5;" edge="1" parent="1" source="act" target="u3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="conn3" value="" style="endArrow=none;html=1;exitX=1;exitY=0.33;entryX=0;entryY=0.5;" edge="1" parent="1" source="act" target="u7"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- Page 5: Class Diagram -->
+  <diagram name="5. Class Diagram" id="classStyle">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" value="User" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;resizeParent=1;resizeLastChild=1;" vertex="1" parent="1"><mxGeometry x="320" y="40" width="160" height="150" as="geometry" /></mxCell>
+        <mxCell id="c1a" value="+ id: int&lt;br&gt;+ name: string&lt;br&gt;+ email: string&lt;br&gt;+ password: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;" vertex="1" parent="c1"><mxGeometry y="26" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="c1m" value="+ login()&lt;br&gt;+ logout()&lt;br&gt;+ get_profile()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;" vertex="1" parent="c1"><mxGeometry y="86" width="160" height="64" as="geometry" /></mxCell>
+        <mxCell id="c2" value="Doctor" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;resizeParent=1;resizeLastChild=1;" vertex="1" parent="1"><mxGeometry x="320" y="240" width="160" height="150" as="geometry" /></mxCell>
+        <mxCell id="c2a" value="+ id: int&lt;br&gt;+ spec_id: int&lt;br&gt;+ phone: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;" vertex="1" parent="c2"><mxGeometry y="26" width="160" height="60" as="geometry" /></mxCell>
+        <mxCell id="c2m" value="+ update_status()&lt;br&gt;+ get_appts()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;" vertex="1" parent="c2"><mxGeometry y="86" width="160" height="64" as="geometry" /></mxCell>
+        <mxCell id="assoc1" value="1" style="endArrow=block;html=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;endFill=0;dashed=1;" edge="1" parent="1" source="c2" target="c1"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- Page 6: Activity Diagram -->
+  <diagram name="6. Activity Diagram" id="actStyle">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="start" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;" vertex="1" parent="1"><mxGeometry x="390" y="40" width="30" height="30" as="geometry" /></mxCell>
+        <mxCell id="l_start" value="Start" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1"><mxGeometry x="420" y="40" width="40" height="30" as="geometry" /></mxCell>
+        <mxCell id="act1" value="User Login" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="345" y="100" width="120" height="40" as="geometry" /></mxCell>
+        <mxCell id="dec1" value="Credentials&lt;br&gt;Valid?" style="rhombus;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="355" y="170" width="100" height="80" as="geometry" /></mxCell>
+        <mxCell id="act2" value="View Dashboard" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="345" y="280" width="120" height="40" as="geometry" /></mxCell>
+        <mxCell id="act3" value="Book Appointment" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="345" y="350" width="120" height="40" as="geometry" /></mxCell>
+        <mxCell id="dec2" value="Success?" style="rhombus;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="355" y="420" width="100" height="80" as="geometry" /></mxCell>
+        <mxCell id="act4" value="Show Confirmation" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="345" y="530" width="120" height="40" as="geometry" /></mxCell>
+        <mxCell id="end" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="390" y="600" width="30" height="30" as="geometry" /></mxCell>
+        <mxCell id="tr1" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="start" target="act1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="tr2" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="act1" target="dec1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="tr3" value="Yes" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="dec1" target="act2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="tr4" value="No" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="dec1" target="act1"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- Page 7: Sequence Diagram -->
+  <diagram name="7. Sequence Diagram" id="seqStyle">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="lif1" value="Patient" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1"><mxGeometry x="40" y="40" width="100" height="360" as="geometry" /></mxCell>
+        <mxCell id="lif2" value="Auth System" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1"><mxGeometry x="240" y="40" width="100" height="360" as="geometry" /></mxCell>
+        <mxCell id="lif3" value="Appointment Module" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1"><mxGeometry x="440" y="40" width="120" height="360" as="geometry" /></mxCell>
+        <mxCell id="lif4" value="MySQL Database" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1"><mxGeometry x="640" y="40" width="120" height="360" as="geometry" /></mxCell>
+        <mxCell id="msg1" value="Login(credentials)" style="endArrow=classic;html=1;exitX=1;exitY=0.15;entryX=0;entryY=0.15;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="lif1" target="lif2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="msg2" value="Verify(credentials)" style="endArrow=classic;html=1;exitX=0.9;exitY=0.2;entryX=0.9;entryY=0.3;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="lif2" target="lif2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="msg3" value="LoginSuccessful()" style="endArrow=open;html=1;dashed=1;exitX=0;exitY=0.4;entryX=1;entryY=0.4;" edge="1" parent="1" source="lif2" target="lif1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="msg4" value="BookAppointment(details)" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="lif1" target="lif3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="msg5" value="SaveToDB()" style="endArrow=classic;html=1;exitX=1;exitY=0.65;entryX=0;entryY=0.65;" edge="1" parent="1" source="lif3" target="lif4"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

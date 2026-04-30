@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book an appointment with our expert doctors at MediConnect.">
+    <title>Book Appointment - MediConnect</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <div class="page-wrapper">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    Schedule a Visit
+                </div>
+                <h1>Book an Appointment</h1>
+                <p>Fill in your details below and we'll confirm your appointment within 24 hours.</p>
+            </div>
+
+            <!-- Appointment Form -->
+            <div class="form-container" id="appointmentFormContainer">
+                <form id="appointmentForm">
+                    <div class="form-grid">
+                        <!-- Full Name -->
+                        <div class="form-group">
+                            <label class="form-label">Full Name <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="patientName" name="patient_name" placeholder="John Doe" required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label class="form-label">Email Address <span class="required">*</span></label>
+                            <input type="email" class="form-input" id="patientEmail" name="patient_email" placeholder="john@example.com" required>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group">
+                            <label class="form-label">Phone Number <span class="required">*</span></label>
+                            <input type="tel" class="form-input" id="patientPhone" name="patient_phone" placeholder="+1 (555) 000-0000" required>
+                        </div>
+
+                        <!-- Specialization -->
+                        <div class="form-group">
+                            <label class="form-label">Specialization <span class="required">*</span></label>
+                            <select class="form-select" id="specialization" name="specialization_id" required>
+                                <option value="">Select specialization</option>
+                            </select>
+                        </div>
+
+                        <!-- Doctor -->
+                        <div class="form-group">
+                            <label class="form-label">Doctor <span class="required">*</span></label>
+                            <select class="form-select" id="doctor" name="doctor_id" required disabled>
+                                <option value="">Select doctor</option>
+                            </select>
+                        </div>
+
+                        <!-- Appointment Date -->
+                        <div class="form-group">
+                            <label class="form-label">Appointment Date <span class="required">*</span></label>
+                            <input type="date" class="form-input" id="appointmentDate" name="appointment_date" required>
+                        </div>
+
+                        <!-- Time Slot -->
+                        <div class="form-group">
+                            <label class="form-label">Time Slot <span class="required">*</span></label>
+                            <select class="form-select" id="timeSlot" name="time_slot" required>
+                                <option value="">Select time</option>
+                                <option value="09:00 AM">09:00 AM</option>
+                                <option value="09:30 AM">09:30 AM</option>
+                                <option value="10:00 AM">10:00 AM</option>
+                                <option value="10:30 AM">10:30 AM</option>
+                                <option value="11:00 AM">11:00 AM</option>
+                                <option value="11:30 AM">11:30 AM</option>
+                                <option value="12:00 PM">12:00 PM</option>
+                                <option value="02:00 PM">02:00 PM</option>
+                                <option value="02:30 PM">02:30 PM</option>
+                                <option value="03:00 PM">03:00 PM</option>
+                                <option value="03:30 PM">03:30 PM</option>
+                                <option value="04:00 PM">04:00 PM</option>
+                                <option value="04:30 PM">04:30 PM</option>
+                                <option value="05:00 PM">05:00 PM</option>
+                            </select>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="form-group full-width">
+                            <label class="form-label">Additional Notes</label>
+                            <textarea class="form-textarea" id="notes" name="notes" placeholder="Any specific symptoms or concerns..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div style="margin-top: var(--space-8);">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block" id="submitAppointmentBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            Book Appointment
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Success Message (hidden by default) -->
+            <div class="form-container hidden" id="successMessage" style="text-align: center; padding: var(--space-16);">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--success-100); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6);">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <h2 style="color: var(--neutral-900); margin-bottom: var(--space-3);">Appointment Booked!</h2>
+                <p style="color: var(--neutral-500); margin-bottom: var(--space-2);">Your appointment has been submitted successfully.</p>
+                <p style="color: var(--neutral-700); font-weight: 600; margin-bottom: var(--space-2);">Appointment Number:</p>
+                <p id="appointmentNumber" style="font-size: 1.5rem; font-weight: 800; color: var(--primary-600); margin-bottom: var(--space-8);"></p>
+                <p style="color: var(--neutral-500); font-size: 0.9rem; margin-bottom: var(--space-6);">Please save this number to check your appointment status.</p>
+                <div style="display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap;">
+                    <a href="/patient/check-status.html" class="btn btn-primary">Check Status</a>
+                    <button class="btn btn-secondary" onclick="resetForm()">Book Another</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <script src="/script.js"></script>
+    <script src="/patient/patient.js"></script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Doctor Portal - MediConnect</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="dashboard-sidebar" id="doctorSidebar">
+            <div class="sidebar-logo"><div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div><span class="logo-text">Medi<span style="color:var(--primary-300);">Connect</span></span></div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-title">Main</div>
+                <a href="/index.html" class="sidebar-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Back to Home</a>
+                <a href="/doctor/dashboard.html" class="sidebar-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+                <div class="sidebar-section-title">Appointments</div>
+                <a href="/doctor/new-appointments.html" class="sidebar-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>New Appointments</a>
+                <a href="/doctor/approved-appointments.html" class="sidebar-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Approved</a>
+                <a href="/doctor/cancelled-appointments.html" class="sidebar-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>Cancelled</a>
+                <a href="/doctor/all-appointments.html" class="sidebar-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>All Appointments</a>
+                <div class="sidebar-section-title">Account</div>
+                <a href="/doctor/profile.html" class="sidebar-link active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile</a>
+                <a href="#" class="sidebar-link" onclick="logout()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <button class="sidebar-toggle-btn" onclick="document.getElementById('doctorSidebar').classList.toggle('open')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+
+            <div class="dashboard-header">
+                <div><h1 class="dashboard-title">My Profile</h1><p class="dashboard-subtitle">View and manage your profile information.</p></div>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profileAvatar">DR</div>
+                    <h2 id="profileName">Doctor Name</h2>
+                    <p style="opacity: 0.8; margin-top: var(--space-1);" id="profileSpec">Specialization</p>
+                </div>
+                <div class="profile-body" style="padding: var(--space-8);">
+                    <div class="profile-info-grid" id="profileInfo">
+                        <div class="loading-overlay"><div class="spinner"></div></div>
+                    </div>
+
+                    <!-- Edit Profile Form -->
+                    <div style="margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--neutral-100);">
+                        <h3 style="margin-bottom: var(--space-5);">Update Profile</h3>
+                        <form id="updateProfileForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-input" id="editName">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-input" id="editPhone">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Specialization</label>
+                                    <select class="form-input" id="editSpecialization">
+                                        <option value="">Select Specialization</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Qualification</label>
+                                    <input type="text" class="form-input" id="editQualification">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Experience (Years)</label>
+                                    <input type="number" class="form-input" id="editExperience" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Consultation Fee (₹)</label>
+                                    <input type="number" class="form-input" id="editFee" min="0" step="50">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label class="form-label">Bio</label>
+                                    <textarea class="form-textarea" id="editBio" placeholder="Write about yourself..."></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-6">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div style="margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--neutral-100);">
+                        <h3 style="margin-bottom: var(--space-5);">Change Password</h3>
+                        <form id="changePasswordForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" class="form-input" id="currentPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" class="form-input" id="newPassword" required minlength="6">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-secondary mt-6">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!requireAuth('doctor')) return;
+            initDashboardSidebar();
+            loadProfile();
+        });
+
+        async function loadProfile() {
+            const user = getUser();
+            if (!user) return;
+
+            try {
+                // Fetch specializations first
+                const specData = await apiGet('/specializations');
+                const specSelect = document.getElementById('editSpecialization');
+                specSelect.innerHTML = '<option value="">Select Specialization</option>';
+                if (specData.specializations) {
+                    specData.specializations.forEach(s => {
+                        specSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                    });
+                }
+
+                // Fetch doctor profile
+                const data = await apiGet(`/doctors/${user.id}`);
+                const doc = data.doctor;
+
+                document.getElementById('profileAvatar').textContent = getInitials(doc.full_name);
+                document.getElementById('profileName').textContent = doc.full_name;
+                document.getElementById('profileSpec').textContent = doc.specialization_name || 'General';
+
+                document.getElementById('profileInfo').innerHTML = `
+                    <div class="profile-info-item"><label>Email</label><p>${doc.email}</p></div>
+                    <div class="profile-info-item"><label>Phone</label><p>${doc.phone || 'N/A'}</p></div>
+                    <div class="profile-info-item"><label>Qualification</label><p>${doc.qualification || 'N/A'}</p></div>
+                    <div class="profile-info-item"><label>Experience</label><p>${doc.experience_years} years</p></div>
+                    <div class="profile-info-item"><label>Consultation Fee</label><p>₹${doc.consultation_fee}</p></div>
+                    <div class="profile-info-item"><label>Status</label><p>${getStatusBadge(doc.status === 'active' ? 'approved' : 'cancelled')}</p></div>
+                `;
+
+                // Pre-fill edit form
+                document.getElementById('editName').value = doc.full_name;
+                document.getElementById('editPhone').value = doc.phone || '';
+                if (doc.specialization_id) {
+                    document.getElementById('editSpecialization').value = doc.specialization_id;
+                }
+                document.getElementById('editQualification').value = doc.qualification || '';
+                document.getElementById('editExperience').value = doc.experience_years;
+                document.getElementById('editFee').value = doc.consultation_fee;
+                document.getElementById('editBio').value = doc.bio || '';
+            } catch (error) {
+                showToast('Failed to load profile', 'error');
+            }
+        }
+
+        // Update Profile
+        document.getElementById('updateProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = getUser();
+            try {
+                await apiPut(`/doctors/${user.id}`, {
+                    full_name: document.getElementById('editName').value,
+                    phone: document.getElementById('editPhone').value,
+                    specialization_id: parseInt(document.getElementById('editSpecialization').value) || null,
+                    qualification: document.getElementById('editQualification').value,
+                    experience_years: parseInt(document.getElementById('editExperience').value),
+                    consultation_fee: parseFloat(document.getElementById('editFee').value),
+                    bio: document.getElementById('editBio').value
+                });
+                showToast('Profile updated successfully!', 'success');
+                loadProfile();
+            } catch (error) {
+                showToast(error.message || 'Failed to update profile', 'error');
+            }
+        });
+
+        // Change Password
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = getUser();
+            try {
+                await apiPut(`/doctors/${user.id}/password`, {
+                    current_password: document.getElementById('currentPassword').value,
+                    new_password: document.getElementById('newPassword').value
+                });
+                showToast('Password changed successfully!', 'success');
+                document.getElementById('changePasswordForm').reset();
+            } catch (error) {
+                showToast(error.message || 'Failed to change password', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Check your appointment status at MediConnect using your appointment number, name, or phone.">
+    <title>Check Appointment Status - MediConnect</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <div class="page-wrapper">
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="container">
+                <h1 class="search-title">Search Appointment History by Appointment Number/Name/Mobile No</h1>
+
+                <div class="search-box">
+                    <div class="search-input-wrapper">
+                        <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Appointment No./Name/Mobile No." autocomplete="off">
+                    </div>
+                    <button class="search-btn" id="searchBtn" onclick="searchAppointments()">CHECK</button>
+                </div>
+
+                <!-- Search Results -->
+                <div class="search-results" id="searchResults" style="display: none;"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <script src="/script.js"></script>
+    <script>
+        // Handle Enter key in search
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchAppointments();
+        });
+
+        // Search Appointments
+        async function searchAppointments() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('searchResults');
+
+            if (!query) {
+                showToast('Please enter a search term', 'warning');
+                return;
+            }
+
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `<div class="loading-overlay"><div class="spinner"></div><p>Searching...</p></div>`;
+
+            try {
+                const data = await apiGet(`/appointments/search?q=${encodeURIComponent(query)}`);
+
+                if (data.appointments && data.appointments.length > 0) {
+                    resultsDiv.innerHTML = data.appointments.map(apt => `
+                        <div class="result-card">
+                            <div class="result-header">
+                                <h3 style="font-weight: 700; color: var(--neutral-900);">${apt.appointment_number}</h3>
+                                ${getStatusBadge(apt.status)}
+                            </div>
+                            <div class="result-details">
+                                <div class="result-item">
+                                    <label>Patient Name</label>
+                                    <p>${apt.patient_name}</p>
+                                </div>
+                                <div class="result-item">
+                                    <label>Doctor</label>
+                                    <p>${apt.doctor_name || 'N/A'}</p>
+                                </div>
+                                <div class="result-item">
+                                    <label>Specialization</label>
+                                    <p>${apt.specialization_name || 'N/A'}</p>
+                                </div>
+                                <div class="result-item">
+                                    <label>Date</label>
+                                    <p>${formatDate(apt.appointment_date)}</p>
+                                </div>
+                                <div class="result-item">
+                                    <label>Time</label>
+                                    <p>${apt.time_slot}</p>
+                                </div>
+                                <div class="result-item">
+                                    <label>Email</label>
+                                    <p>${apt.patient_email}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="empty-state">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <h3>No appointments found</h3>
+                            <p>Try searching with a different term.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Search failed</h3>
+                        <p>Please make sure the server is running and try again.</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

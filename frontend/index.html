@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="MediConnect - Your trusted healthcare companion. Book appointments with top doctors seamlessly.">
+    <title>MediConnect - Doctor Appointment Booking System</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <!-- Header Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <div class="page-wrapper">
+        <!-- ============================== -->
+        <!-- HERO SECTION -->
+        <!-- ============================== -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="hero-grid">
+                    <div class="hero-text">
+
+                        <h1 class="hero-title">
+                            Your Health, Our Priority
+                        </h1>
+                        <p class="hero-description">
+                            Connect with top-rated doctors, book appointments in seconds,
+                            and take control of your health journey — all in one place.
+                        </p>
+
+                    </div>
+                    <div class="hero-image">
+                        <img src="/hero-doctors.png" alt="Our Medical Team">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!-- FEATURES SECTION -->
+        <!-- ============================== -->
+        <section class="section">
+            <div class="container">
+                <div class="features-grid">
+                    <!-- Easy Booking -->
+                    <div class="card" id="featureBooking">
+                        <div class="card-icon green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Easy Booking</h3>
+                        <p class="card-desc">Schedule appointments with just a few clicks. No waiting, no hassle.</p>
+                    </div>
+
+                    <!-- Expert Doctors -->
+                    <div class="card" id="featureDoctors">
+                        <div class="card-icon orange">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Expert Doctors</h3>
+                        <p class="card-desc">Access a network of certified specialists across all medical fields.</p>
+                    </div>
+
+                    <!-- 24/7 Support -->
+                    <div class="card" id="featureSupport">
+                        <div class="card-icon blue">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                            </svg>
+                        </div>
+                        <h3 class="card-title">24/7 Support</h3>
+                        <p class="card-desc">Our care team is always available to assist you around the clock.</p>
+                    </div>
+
+                    <!-- Secure Records -->
+                    <div class="card" id="featureSecurity">
+                        <div class="card-icon red">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Secure Records</h3>
+                        <p class="card-desc">Your medical data is encrypted and protected with industry standards.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!-- SPECIALIZATIONS SECTION -->
+        <!-- ============================== -->
+        <section class="specializations-section" id="specializationsSection">
+            <div class="container">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Our Specializations</h2>
+                        <p class="section-subtitle">Browse our wide range of medical specialties to find the care you
+                            need.</p>
+                    </div>
+                    <a href="/patient/appointment.html" class="btn btn-secondary" id="viewAllSpecBtn">View All</a>
+                </div>
+                <div class="specialization-grid" id="specGrid">
+                    <!-- Specializations loaded dynamically -->
+                    <div class="loading-overlay">
+                        <div class="spinner"></div>
+                        <p>Loading specializations...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!-- HOW IT WORKS SECTION -->
+        <!-- ============================== -->
+        <section class="how-it-works-section">
+            <div class="container">
+                <div class="hero-badge"
+                    style="margin-bottom: var(--space-2); color: #af4c42; background: transparent; border: none; font-weight: 700;">
+                    HOW IT WORKS
+                </div>
+                <h2
+                    style="font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; color: var(--neutral-900); margin-bottom: var(--space-4);">
+                    Book in 3 Simple Steps</h2>
+
+                <div class="how-it-works-grid">
+                    <!-- Step 1 -->
+                    <div class="step-card">
+                        <div class="step-icon-wrapper">
+                            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <div class="step-number">1</div>
+                        </div>
+                        <h3 class="step-title">Search a Doctor</h3>
+                        <p class="step-desc">Browse our network of specialists and find the right doctor for your needs.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="step-card">
+                        <div class="step-icon-wrapper">
+                            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
+                                <path d="M9 16l2 2 4-4" />
+                            </svg>
+                            <div class="step-number">2</div>
+                        </div>
+                        <h3 class="step-title">Book Appointment</h3>
+                        <p class="step-desc">Choose a convenient time slot and book your appointment instantly online.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="step-card">
+                        <div class="step-icon-wrapper">
+                            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                                <path d="M16 11l2 2 4-4" />
+                            </svg>
+                            <div class="step-number">3</div>
+                        </div>
+                        <h3 class="step-title">Get Consultation</h3>
+                        <p class="step-desc">Visit your doctor at the scheduled time and receive expert medical care.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!-- CTA SECTION -->
+        <!-- ============================== -->
+        <section class="section">
+            <div class="container">
+                <div
+                    style="background: linear-gradient(135deg, var(--primary-700), var(--primary-500)); border-radius: var(--radius-2xl); padding: var(--space-16) var(--space-10); text-align: center; color: white; position: relative; overflow: hidden;">
+                    <div style="position: relative; z-index: 1;">
+                        <h2
+                            style="font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: var(--space-4);">
+                            Ready to Book Your Appointment?</h2>
+                        <p
+                            style="color: rgba(255,255,255,0.75); font-size: 1.05rem; max-width: 500px; margin: 0 auto var(--space-8);">
+                            Take the first step towards better health. Our experts are just a click away.</p>
+                        <a href="/patient/appointment.html" class="btn btn-accent btn-lg" id="ctaBookBtn">
+                            Book Now
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                                <polyline points="12 5 19 12 12 19" />
+                            </svg>
+                        </a>
+                    </div>
+                    <!-- Decorative circles -->
+                    <div
+                        style="position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%;">
+                    </div>
+                    <div
+                        style="position: absolute; bottom: -40px; left: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%;">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <script src="/script.js"></script>
+    <script>
+        // Load specializations on home page
+        document.addEventListener('DOMContentLoaded', async () => {
+            const specGrid = document.getElementById('specGrid');
+
+            // Specialization icons mapping
+            const specIcons = {
+                'General Physician': '🩺',
+                'Cardiologist': '❤️',
+                'Dermatologist': '🧴',
+                'Orthopedic': '🦴',
+                'Pediatrician': '👶',
+                'Neurologist': '🧠',
+                'Ophthalmology': '👁️',
+                'ENT': '👂',
+                'Gynecologist': '👩‍⚕️',
+                'Dentist': '🦷',
+                'Psychiatrist': '🧠',
+                'Radiologist': '☢️'
+            };
+
+            try {
+                const data = await apiGet('/specializations');
+                if (data.specializations && data.specializations.length > 0) {
+                    specGrid.innerHTML = data.specializations.map(spec => `
+                        <div class="spec-card" onclick="window.location.href='/patient/appointment.html?spec=${spec.id}'">
+                            <div class="spec-card-icon">${specIcons[spec.name] || '⚕️'}</div>
+                            <div class="spec-card-name">${spec.name}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    specGrid.innerHTML = `
+                        <div class="empty-state" style="grid-column: 1 / -1;">
+                            <h3>No specializations available</h3>
+                            <p>Please check back later.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                specGrid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <h3>Unable to load specializations</h3>
+                        <p>Please make sure the server is running.</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+
+</html>
