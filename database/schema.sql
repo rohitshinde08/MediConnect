@@ -1,13 +1,16 @@
 -- ============================================
--- MediConnect Database Schema
--- Doctor Appointment Management System
+-- MediConnect Unified Database Schema
+-- Optimized for Real-World Healthcare Workflow
 -- ============================================
 
-CREATE DATABASE IF NOT EXISTS mediconnect;
+SET FOREIGN_KEY_CHECKS = 0;
+DROP DATABASE IF EXISTS mediconnect;
+CREATE DATABASE mediconnect;
 USE mediconnect;
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- ============================================
--- Specializations Table
+-- 1. Specializations Table
 -- ============================================
 CREATE TABLE specializations (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -15,7 +18,6 @@ CREATE TABLE specializations (
     description TEXT
 );
 
--- Default Specializations
 INSERT INTO specializations (name, description) VALUES
 ('General Physician', 'Provides general health care, diagnosis, and treatment for common illnesses.'),
 ('Cardiologist', 'Specializes in diagnosing and treating heart-related diseases and conditions.'),
@@ -29,11 +31,9 @@ INSERT INTO specializations (name, description) VALUES
 ('Dentist', 'Provides care for teeth, gums, and overall oral health.'),
 ('Psychiatrist', 'Diagnoses and treats mental health disorders.');
 
-
 -- ============================================
--- Doctors Table
+-- 2. Doctors Table
 -- ============================================
-
 CREATE TABLE doctors (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(150) NOT NULL,
@@ -41,10 +41,13 @@ CREATE TABLE doctors (
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
     specialization_id INT,
+    license_number VARCHAR(100),
     qualification VARCHAR(255),
     experience_years INT DEFAULT 0,
     consultation_fee DECIMAL(10, 2) DEFAULT 0.00,
     bio TEXT,
+    document_path VARCHAR(255),
+    verification_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
     status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -52,14 +55,13 @@ CREATE TABLE doctors (
 );
 
 -- Default Doctors (password: doctor123)
-INSERT INTO doctors (full_name, email, password, phone, specialization_id, qualification, experience_years, consultation_fee, bio) VALUES
-('Dr. Emilia Winson', 'emilia@mediconnect.com', '$2a$10$TjsO1SCwYNw7TlyPeOqwYuXxLGY0ahnEDthPKbdyYblXLGUqPuBdm', '+1 555-0101', 1, 'MBBS, MD', 12, 500.00, 'Experienced general physician with over 12 years of practice.'),
-('Dr. James Carter', 'james@mediconnect.com', '$2a$10$TjsO1SCwYNw7TlyPeOqwYuXxLGY0ahnEDthPKbdyYblXLGUqPuBdm', '+1 555-0102', 2, 'MBBS, DM Cardiology', 15, 800.00, 'Senior cardiologist specializing in interventional cardiology.'),
-('Dr. Sarah Mitchell', 'sarah@mediconnect.com', '$2a$10$TjsO1SCwYNw7TlyPeOqwYuXxLGY0ahnEDthPKbdyYblXLGUqPuBdm', '+1 555-0103', 3, 'MBBS, MD Dermatology', 8, 600.00, 'Dermatologist with expertise in cosmetic and clinical dermatology.'),
-('Dr. Robert Lee', 'robert@mediconnect.com', '$2a$10$TjsO1SCwYNw7TlyPeOqwYuXxLGY0ahnEDthPKbdyYblXLGUqPuBdm', '+1 555-0104', 4, 'MBBS, MS Orthopedics', 10, 700.00, 'Orthopedic surgeon with specialization in joint replacement.'),
-('Dr. Priya Sharma', 'priya@mediconnect.com', '$2a$10$TjsO1SCwYNw7TlyPeOqwYuXxLGY0ahnEDthPKbdyYblXLGUqPuBdm', '+1 555-0105', 5, 'MBBS, MD Pediatrics', 9, 450.00, 'Pediatrician dedicated to child health and development.');
+INSERT INTO doctors (full_name, email, password, phone, specialization_id, license_number, qualification, experience_years, consultation_fee, bio, verification_status) VALUES
+('Dr. Emilia Winson', 'emilia@mediconnect.com', '$2a$10$TjsO1SCwYNw7TlyPeOqwYuXxLGY0ahnEDthPKbdyYblXLGUqPuBdm', '+1 555-0101', 1, 'LIC-1001', 'MBBS, MD', 12, 500.00, 'Experienced general physician with over 12 years of practice.', 'approved'),
+('Dr. James Carter', 'james@mediconnect.com', '$2a$10$TjsO1SCwYNw7TlyPeOqwYuXxLGY0ahnEDthPKbdyYblXLGUqPuBdm', '+1 555-0102', 2, 'LIC-1002', 'MBBS, DM Cardiology', 15, 800.00, 'Senior cardiologist specializing in interventional cardiology.', 'approved'),
+('Dr. Sarah Mitchell', 'sarah@mediconnect.com', '$2a$10$TjsO1SCwYNw7TlyPeOqwYuXxLGY0ahnEDthPKbdyYblXLGUqPuBdm', '+1 555-0103', 3, 'LIC-1003', 'MBBS, MD Dermatology', 8, 600.00, 'Dermatologist with expertise in cosmetic and clinical dermatology.', 'approved');
+
 -- ============================================
--- Admin Table
+-- 3. Admin Table
 -- ============================================
 CREATE TABLE admins (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -71,8 +73,27 @@ CREATE TABLE admins (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Default Admin (password: admin123)
+INSERT INTO admins (full_name, email, password, role) VALUES 
+('System Admin', 'admin@mediconnect.com', '$2a$10$TjsO1SCwYNw7TlyPeOqwYuXxLGY0ahnEDthPKbdyYblXLGUqPuBdm', 'superadmin');
+
 -- ============================================
--- Appointments Table
+-- 4. Doctor Availability Table
+-- ============================================
+CREATE TABLE doctor_availability (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    doctor_id INT NOT NULL,
+    available_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    slot_duration INT DEFAULT 30, -- in minutes
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (doctor_id) REFERENCES doctors(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_availability (doctor_id, available_date)
+);
+
+
+-- 6. Appointments Table
 -- ============================================
 CREATE TABLE appointments (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -86,6 +107,8 @@ CREATE TABLE appointments (
     time_slot VARCHAR(50) NOT NULL,
     status ENUM('pending', 'approved', 'cancelled', 'completed') DEFAULT 'pending',
     notes TEXT,
+    diagnosis TEXT,
+    prescription TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (doctor_id) REFERENCES doctors(id) ON DELETE SET NULL,
@@ -93,7 +116,6 @@ CREATE TABLE appointments (
 );
 
 -- Sample Appointments
-INSERT INTO appointments (id,appointment_number, patient_name, patient_email, patient_phone, doctor_id, specialization_id, appointment_date, time_slot, status) VALUES
-(1,'APT-2024-001', 'Samantha Williams', 'samantha@email.com', '+1 555-1001', 1, 1, '2026-04-14', '09:00 AM', 'approved'),
-(2,'APT-2024-002', 'John Smith', 'john@email.com', '+1 555-1002', 2, 2, '2026-04-15', '10:00 AM', 'pending'),
-(3,'APT-2024-003', 'Emily Davis', 'emily@email.com', '+1 555-1003', 3, 3, '2026-04-16', '02:00 PM', 'cancelled');
+INSERT INTO appointments (appointment_number, patient_name, patient_email, patient_phone, doctor_id, specialization_id, appointment_date, time_slot, status) VALUES
+('APT-2024-001', 'Samantha Williams', 'samantha@email.com', '+1 555-1001', 1, 1, '2026-05-10', '09:00 AM', 'approved'),
+('APT-2024-002', 'John Smith', 'john@email.com', '+1 555-1002', 2, 2, '2026-05-12', '10:00 AM', 'pending');

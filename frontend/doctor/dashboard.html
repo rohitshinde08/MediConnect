@@ -21,7 +21,7 @@
             </div>
 
             <nav class="sidebar-nav">
-                <div class="sidebar-section-title">Main</div>
+                 <div class="sidebar-section-title">Main</div>
                 <a href="/index.html" class="sidebar-link">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -35,6 +35,12 @@
                         <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
                     </svg>
                     Dashboard
+                </a>
+                <a href="#availabilitySection" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    Availability
                 </a>
 
                 <div class="sidebar-section-title">Appointments</div>
@@ -158,6 +164,48 @@
                 </div>
             </div>
 
+            <!-- Availability Management -->
+            <div class="table-container" id="availabilitySection" style="margin-bottom: var(--space-8);">
+                <div class="table-header">
+                    <h3 class="table-title">Manage Availability</h3>
+                </div>
+                <div style="padding: var(--space-6);">
+                    <form id="availabilityForm" class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4);">
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-input" id="availDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" class="form-input" id="availStart" value="09:00" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Time</label>
+                            <input type="time" class="form-input" id="availEnd" value="17:00" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Slot Duration</label>
+                            <select class="form-select" id="availDuration">
+                                <option value="15">15 mins</option>
+                                <option value="30" selected>30 mins</option>
+                                <option value="45">45 mins</option>
+                                <option value="60">60 mins</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="display: flex; align-items: flex-end;">
+                            <button type="submit" class="btn btn-primary btn-block">Set Availability</button>
+                        </div>
+                    </form>
+                    
+                    <div style="margin-top: var(--space-6);">
+                        <h4 style="margin-bottom: var(--space-3); font-size: 0.9rem; color: var(--neutral-600);">Scheduled Availability</h4>
+                        <div id="availabilityList" style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+                            <!-- Availability items -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Recent Appointments Table -->
             <div class="table-container">
                 <div class="table-header">
@@ -203,7 +251,59 @@
 
             initDashboardSidebar();
             loadDoctorDashboard();
+            loadAvailability();
+            
+            // Availability Form Handler
+            document.getElementById('availabilityForm').addEventListener('submit', handleSetAvailability);
         });
+
+        async function loadAvailability() {
+            const user = getUser();
+            const list = document.getElementById('availabilityList');
+            list.innerHTML = '<div class="spinner" style="width:20px;height:20px;"></div>';
+
+            try {
+                const data = await apiGet(`/doctors/${user.id}/availability`);
+                const items = data.availability || [];
+
+                if (items.length === 0) {
+                    list.innerHTML = '<p style="color: var(--neutral-400); font-size: 0.8rem;">No availability set yet.</p>';
+                    return;
+                }
+
+                list.innerHTML = items.map(item => `
+                    <div style="background: var(--neutral-50); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--neutral-200); font-size: 0.8rem;">
+                        <strong>${formatDate(item.available_date)}</strong>: ${item.start_time.substring(0,5)} - ${item.end_time.substring(0,5)}
+                    </div>
+                `).join('');
+            } catch (error) {
+                list.innerHTML = '<p style="color: var(--error-600); font-size: 0.8rem;">Failed to load.</p>';
+            }
+        }
+
+        async function handleSetAvailability(e) {
+            e.preventDefault();
+            const user = getUser();
+            const btn = e.submitter;
+            btn.disabled = true;
+
+            const payload = {
+                available_date: document.getElementById('availDate').value,
+                start_time: document.getElementById('availStart').value,
+                end_time: document.getElementById('availEnd').value,
+                slot_duration_minutes: parseInt(document.getElementById('availDuration').value)
+            };
+
+            try {
+                await apiPost(`/doctors/${user.id}/availability`, payload);
+                showToast('Availability updated!', 'success');
+                loadAvailability();
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        }
 
         async function loadDoctorDashboard() {
             const user = getUser();
@@ -276,11 +376,18 @@
             }
         }
 
+        let currentAptId = null;
+
         async function updateStatus(id, status) {
+            if (status === 'completed') {
+                currentAptId = id;
+                document.getElementById('diagnosisModal').style.display = 'flex';
+                return;
+            }
+
             let actionText = 'update';
             if (status === 'approved') actionText = 'approve';
             if (status === 'cancelled') actionText = 'cancel';
-            if (status === 'completed') actionText = 'mark as completed';
 
             if (!confirm(`Are you sure you want to ${actionText} this appointment?`)) return;
 
@@ -292,16 +399,74 @@
                 showToast('Failed to update status', 'error');
             }
         }
+
+        function closeDiagnosisModal() {
+            document.getElementById('diagnosisModal').style.display = 'none';
+            document.getElementById('diagInput').value = '';
+            document.getElementById('presInput').value = '';
+            currentAptId = null;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const saveBtn = document.getElementById('saveDiagBtn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', async () => {
+                    const diagnosis = document.getElementById('diagInput').value.trim();
+                    const prescription = document.getElementById('presInput').value.trim();
+
+                    if (!diagnosis) return showToast('Diagnosis is required', 'error');
+
+                    try {
+                        await apiPut(`/appointments/${currentAptId}/status`, { 
+                            status: 'completed',
+                            diagnosis,
+                            prescription
+                        });
+                        showToast('Appointment completed!', 'success');
+                        closeDiagnosisModal();
+                        loadDoctorDashboard();
+                    } catch (error) {
+                        showToast('Failed to complete appointment', 'error');
+                    }
+                });
+            }
+        });
     </script>
+
+    <!-- Diagnosis Modal -->
+    <div id="diagnosisModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Complete Appointment</h3>
+                <button class="modal-close" onclick="closeDiagnosisModal()">&times;</button>
+            </div>
+            <div style="padding: var(--space-6);">
+                <div class="form-group">
+                    <label class="form-label">Diagnosis <span class="required">*</span></label>
+                    <textarea class="form-textarea" id="diagInput" placeholder="Enter patient diagnosis..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prescription</label>
+                    <textarea class="form-textarea" id="presInput" placeholder="Enter prescribed medicines..."></textarea>
+                </div>
+                <div style="margin-top: var(--space-6); display: flex; gap: var(--space-3); justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="closeDiagnosisModal()">Cancel</button>
+                    <button class="btn btn-primary" id="saveDiagBtn">Save & Complete</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Appointment Details Modal -->
     <div id="detailsModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
                 <h3 class="modal-title">Appointment Details</h3>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
-            <div id="modalBody"></div>
+            <div style="max-height: 80vh; overflow-y: auto;">
+                <div id="modalBody" style="padding: var(--space-6);"></div>
+            </div>
         </div>
     </div>
 </body>

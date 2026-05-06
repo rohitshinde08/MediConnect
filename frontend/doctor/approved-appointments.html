@@ -90,7 +90,15 @@
             renderTable(allAppointments.filter(a => a.patient_name.toLowerCase().includes(q) || a.appointment_number.toLowerCase().includes(q)));
         }
 
+        let currentAptId = null;
+
         async function updateStatus(id, status) {
+            if (status === 'completed') {
+                currentAptId = id;
+                document.getElementById('diagnosisModal').style.display = 'flex';
+                return;
+            }
+
             if (!confirm(`Mark this appointment as ${status}?`)) return;
             try {
                 await apiPut(`/appointments/${id}/status`, { status });
@@ -100,7 +108,63 @@
                 showToast('Failed to update status', 'error');
             }
         }
+
+        function closeDiagnosisModal() {
+            document.getElementById('diagnosisModal').style.display = 'none';
+            document.getElementById('diagInput').value = '';
+            document.getElementById('presInput').value = '';
+            currentAptId = null;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const saveDiagBtn = document.getElementById('saveDiagBtn');
+            if (saveDiagBtn) {
+                saveDiagBtn.addEventListener('click', async () => {
+                    const diagnosis = document.getElementById('diagInput').value.trim();
+                    const prescription = document.getElementById('presInput').value.trim();
+
+                    if (!diagnosis) return showToast('Diagnosis is required', 'error');
+
+                    try {
+                        await apiPut(`/appointments/${currentAptId}/status`, { 
+                            status: 'completed',
+                            diagnosis,
+                            prescription
+                        });
+                        showToast('Appointment completed!', 'success');
+                        closeDiagnosisModal();
+                        loadAppointments();
+                    } catch (error) {
+                        showToast('Failed to complete appointment', 'error');
+                    }
+                });
+            }
+        });
     </script>
+
+    <!-- Diagnosis Modal -->
+    <div id="diagnosisModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Complete Appointment</h3>
+                <button class="modal-close" onclick="closeDiagnosisModal()">&times;</button>
+            </div>
+            <div style="padding: var(--space-6);">
+                <div class="form-group">
+                    <label class="form-label">Diagnosis <span class="required">*</span></label>
+                    <textarea class="form-textarea" id="diagInput" placeholder="Enter patient diagnosis..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prescription</label>
+                    <textarea class="form-textarea" id="presInput" placeholder="Enter prescribed medicines..."></textarea>
+                </div>
+                <div style="margin-top: var(--space-6); display: flex; gap: var(--space-3); justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="closeDiagnosisModal()">Cancel</button>
+                    <button class="btn btn-primary" id="saveDiagBtn">Save & Complete</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Appointment Details Modal -->
     <div id="detailsModal" class="modal">

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical History - MediConnect</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .timeline { position: relative; padding-left: 30px; }
+        .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--neutral-200); }
+        .timeline-item { position: relative; margin-bottom: var(--space-8); }
+        .timeline-item::before { content: ''; position: absolute; left: -25px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--primary-500); border: 2px solid white; box-shadow: 0 0 0 2px var(--primary-100); }
+        .history-card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--neutral-200); padding: var(--space-6); transition: transform 0.2s; }
+        .history-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="page-wrapper">
+        <div class="container" style="max-width: 900px;">
+            <div class="page-header">
+                <div class="badge">Patient Records</div>
+                <h1>Medical History</h1>
+                <p>View your past visits, diagnoses, and prescriptions securely.</p>
+            </div>
+
+            <!-- Verification Step -->
+            <div class="form-container" id="verificationStep">
+                <div class="form-grid" style="max-width: 500px; margin: 0 auto;">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="historyName" placeholder="Your Registered Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Registered Email</label>
+                        <input type="email" class="form-input" id="historyEmail" placeholder="your@email.com" required>
+                    </div>
+                    <div style="margin-top: var(--space-4);">
+                        <button class="btn btn-primary btn-block" onclick="fetchHistory()">View My History</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Timeline -->
+            <div id="historyTimeline" class="hidden">
+                <div class="timeline" id="timelineList">
+                    <!-- History items will be injected here -->
+                </div>
+            </div>
+
+            <div id="noHistory" class="hidden" style="text-align: center; padding: var(--space-16);">
+                <p style="color: var(--neutral-500);">No completed medical records found for this email.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="/script.js"></script>
+    <script>
+        async function fetchHistory() {
+            const name = document.getElementById('historyName').value.trim();
+            const email = document.getElementById('historyEmail').value.trim();
+
+            if (!name) return showToast('Name is required', 'error');
+            if (!email) return showToast('Email is required', 'error');
+
+            try {
+                const data = await apiGet(`/appointments/patient/history?email=${encodeURIComponent(email)}&patientName=${encodeURIComponent(name)}`);
+                const history = data.history || [];
+                
+                if (history.length === 0) {
+                    document.getElementById('noHistory').classList.remove('hidden');
+                    document.getElementById('historyTimeline').classList.add('hidden');
+                } else {
+                    renderTimeline(history);
+                    document.getElementById('verificationStep').classList.add('hidden');
+                    document.getElementById('historyTimeline').classList.remove('hidden');
+                }
+            } catch (error) {
+                showToast(error.message || 'Verification failed', 'error');
+            }
+        }
+
+        function renderTimeline(history) {
+            const list = document.getElementById('timelineList');
+            list.innerHTML = history.map(item => `
+                <div class="timeline-item">
+                    <div class="history-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-3);">
+                            <div>
+                                <span style="font-weight: 800; color: var(--primary-600);">${formatDate(item.appointment_date)}</span>
+                                <div style="font-size: 0.9rem; color: var(--neutral-500);">${item.time_slot}</div>
+                            </div>
+                            <div class="badge" style="background: var(--success-50); color: var(--success-700); border-color: var(--success-200);">Completed</div>
+                        </div>
+                        <h3 style="font-size: 1.1rem; margin-bottom: var(--space-2);">Dr. ${item.doctor_name}</h3>
+                        <p style="color: var(--neutral-600); font-size: 0.9rem; margin-bottom: var(--space-4);">${item.specialization_name}</p>
+                        
+                        <div style="background: var(--neutral-50); padding: var(--space-4); border-radius: var(--radius-md); margin-bottom: var(--space-4);">
+                            <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--neutral-400); margin-bottom: var(--space-2);">Diagnosis</h4>
+                            <p style="color: var(--neutral-800);">${item.diagnosis || 'No diagnosis recorded'}</p>
+                        </div>
+
+                        ${item.prescription ? `
+                        <div style="background: var(--primary-50); padding: var(--space-4); border-radius: var(--radius-md); border: 1px dashed var(--primary-200);">
+                            <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-600); margin-bottom: var(--space-2);">Prescription</h4>
+                            <p style="color: var(--primary-900); white-space: pre-line;">${item.prescription}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

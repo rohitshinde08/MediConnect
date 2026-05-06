@@ -7,18 +7,19 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { pool } = require('../db');
+const { generateSlots } = require('../utils/slots');
 
 // ============================================
-// Get All Doctors
+// Get All Doctors (Public Listing - Only Approved)
 // GET /api/doctors
 // ============================================
 router.get('/', async (req, res) => {
     try {
-        const { specialization_id, status } = req.query;
+        const { specialization_id, status, verification_status } = req.query;
         let query = `
             SELECT d.id, d.full_name, d.email, d.phone, d.specialization_id, 
-                    d.qualification, d.experience_years, d.consultation_fee, d.bio, 
-                    d.status, d.created_at,
+                    d.license_number, d.qualification, d.experience_years, d.consultation_fee, d.bio, 
+                    d.status, d.verification_status, d.document_path, d.created_at,
                     s.name AS specialization_name
             FROM doctors d
             LEFT JOIN specializations s ON d.specialization_id = s.id
@@ -26,16 +27,22 @@ router.get('/', async (req, res) => {
         const params = [];
         const conditions = [];
 
+        // By default, only show approved doctors in public listing
+        if (!verification_status && !req.query.all) {
+            conditions.push('d.verification_status = "approved"');
+        } else if (verification_status) {
+            conditions.push('d.verification_status = ?');
+            params.push(verification_status);
+        }
+
         if (specialization_id) {
             conditions.push('d.specialization_id = ?');
             params.push(specialization_id);
         }
+        
         if (status) {
-            // Only filter by status if the column exists
-            try {
-                conditions.push('d.status = ?');
-                params.push(status);
-            } catch (e) { /* status column may not exist */ }
+            conditions.push('d.status = ?');
+            params.push(status);
         }
 
         if (conditions.length > 0) {
@@ -54,6 +61,91 @@ router.get('/', async (req, res) => {
 });
 
 // ============================================
+// Get Doctor Availability
+// GET /api/doctors/:id/availability
+// ============================================
+router.get('/:id/availability', async (req, res) => {
+    try {
+        const [rows] = await pool.query(
+            'SELECT * FROM doctor_availability WHERE doctor_id = ? ORDER BY available_date ASC',
+            [req.params.id]
+        );
+        res.json({ availability: rows });
+    } catch (error) {
+        console.error('Get availability error:', error);
+        res.status(500).json({ error: 'Failed to fetch availability' });
+    }
+});
+
+// ============================================
+// Set/Update Doctor Availability
+// POST /api/doctors/:id/availability
+// ============================================
+router.post('/:id/availability', async (req, res) => {
+    try {
+        const { available_date, start_time, end_time, slot_duration } = req.body;
+        const doctorId = req.params.id;
+
+        if (!available_date || !start_time || !end_time) {
+            return res.status(400).json({ error: 'Date, start time, and end time are required' });
+        }
+
+        const [result] = await pool.query(
+            `INSERT INTO doctor_availability (doctor_id, available_date, start_time, end_time, slot_duration) 
+             VALUES (?, ?, ?, ?, ?) 
+             ON DUPLICATE KEY UPDATE start_time = VALUES(start_time), end_time = VALUES(end_time), slot_duration = VALUES(slot_duration)`,
+            [doctorId, available_date, start_time, end_time, slot_duration || 30]
+        );
+
+        res.json({ message: 'Availability updated successfully' });
+    } catch (error) {
+        console.error('Set availability error:', error);
+        res.status(500).json({ error: 'Failed to set availability' });
+    }
+});
+
+// ============================================
+// Get Available Slots for Doctor on specific date
+// GET /api/doctors/:id/slots?date=YYYY-MM-DD
+// ============================================
+router.get('/:id/slots', async (req, res) => {
+    try {
+        const { date } = req.query;
+        const doctorId = req.params.id;
+
+        if (!date) return res.status(400).json({ error: 'Date is required' });
+
+        // Get doctor's availability for that date
+        const [availability] = await pool.query(
+            'SELECT start_time, end_time, slot_duration FROM doctor_availability WHERE doctor_id = ? AND available_date = ?',
+            [doctorId, date]
+        );
+
+        if (availability.length === 0) {
+            return res.json({ slots: [] });
+        }
+
+        const { start_time, end_time, slot_duration } = availability[0];
+        const allSlots = generateSlots(start_time, end_time, slot_duration);
+
+        // Get already booked appointments for that doctor on that date
+        const [booked] = await pool.query(
+            'SELECT time_slot FROM appointments WHERE doctor_id = ? AND appointment_date = ? AND status != "cancelled"',
+            [doctorId, date]
+        );
+
+        const bookedSlots = booked.map(b => b.time_slot);
+        const availableSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
+
+        res.json({ slots: availableSlots });
+
+    } catch (error) {
+        console.error('Get slots error:', error);
+        res.status(500).json({ error: 'Failed to fetch slots' });
+    }
+});
+
+// ============================================
 // Get Single Doctor
 // GET /api/doctors/:id
 // ============================================
@@ -61,8 +153,8 @@ router.get('/:id', async (req, res) => {
     try {
         const [rows] = await pool.query(
             `SELECT d.id, d.full_name, d.email, d.phone, d.specialization_id,
-                    d.qualification, d.experience_years, d.consultation_fee, d.bio,
-                    d.status, d.created_at,
+                    d.license_number, d.qualification, d.experience_years, d.consultation_fee, d.bio,
+                    d.status, d.verification_status, d.document_path, d.created_at,
                     s.name AS specialization_name
              FROM doctors d
              LEFT JOIN specializations s ON d.specialization_id = s.id
@@ -172,3 +264,4 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
+

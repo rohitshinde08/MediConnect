@@ -29,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ============================================
 // API Routes

@@ -14,33 +14,55 @@ async function initAppointmentForm() {
     const specSelect = document.getElementById('specialization');
     const doctorSelect = document.getElementById('doctor');
     const dateInput = document.getElementById('appointmentDate');
+    const timeSelect = document.getElementById('timeSlot');
     const form = document.getElementById('appointmentForm');
 
     if (!specSelect || !form) return;
 
     // Set minimum date to today
     const today = new Date().toISOString().split('T')[0];
-    if (dateInput) dateInput.min = today;
+    if (dateInput) {
+        dateInput.min = today;
+    }
 
     // Load specializations
     await loadSpecializations();
 
-    // Check if specialization was passed via URL query params
-    const urlParams = new URLSearchParams(window.location.search);
-    const specId = urlParams.get('spec');
-    if (specId && specSelect) {
-        specSelect.value = specId;
-        await loadDoctorsBySpecialization(specId);
-    }
+
 
     // When specialization changes, load doctors
     specSelect.addEventListener('change', async () => {
         const specId = specSelect.value;
+        doctorSelect.innerHTML = '<option value="">Select doctor</option>';
+        dateInput.disabled = true;
+        timeSelect.innerHTML = '<option value="">Select doctor first</option>';
+        timeSelect.disabled = true;
+
         if (specId) {
             await loadDoctorsBySpecialization(specId);
         } else {
-            doctorSelect.innerHTML = '<option value="">Select doctor</option>';
             doctorSelect.disabled = true;
+        }
+    });
+
+    // When doctor changes, enable date
+    doctorSelect.addEventListener('change', () => {
+        if (doctorSelect.value) {
+            dateInput.disabled = false;
+            timeSelect.innerHTML = '<option value="">Select date</option>';
+        } else {
+            dateInput.disabled = true;
+            timeSelect.disabled = true;
+        }
+    });
+
+    // When date changes, load slots
+    dateInput.addEventListener('change', async () => {
+        const doctorId = doctorSelect.value;
+        const date = dateInput.value;
+
+        if (doctorId && date) {
+            await loadAvailableSlots(doctorId, date);
         }
     });
 
@@ -92,6 +114,39 @@ async function loadDoctorsBySpecialization(specId) {
 }
 
 // ============================================
+// Load Available Slots
+// ============================================
+async function loadAvailableSlots(doctorId, date) {
+    const timeSelect = document.getElementById('timeSlot');
+    const statusMsg = document.getElementById('slotStatus');
+    
+    timeSelect.innerHTML = '<option value="">Loading slots...</option>';
+    timeSelect.disabled = true;
+    statusMsg.textContent = '';
+
+    try {
+        const data = await apiGet(`/doctors/${doctorId}/slots?date=${date}`);
+        timeSelect.innerHTML = '<option value="">Select time</option>';
+        
+        if (data.slots && data.slots.length > 0) {
+            data.slots.forEach(slot => {
+                timeSelect.innerHTML += `<option value="${slot}">${slot}</option>`;
+            });
+            timeSelect.disabled = false;
+            statusMsg.textContent = `${data.slots.length} slots available`;
+            statusMsg.style.color = 'var(--success-600)';
+        } else {
+            timeSelect.innerHTML = '<option value="">No slots available</option>';
+            statusMsg.textContent = 'Doctor is not available on this date.';
+            statusMsg.style.color = 'var(--error-600)';
+        }
+    } catch (error) {
+        showToast('Failed to load slots', 'error');
+        timeSelect.innerHTML = '<option value="">Error loading slots</option>';
+    }
+}
+
+// ============================================
 // Handle Form Submission
 // ============================================
 async function handleAppointmentSubmit(e) {
@@ -139,21 +194,6 @@ async function handleAppointmentSubmit(e) {
 // Reset Form (for "Book Another")
 // ============================================
 function resetForm() {
-    document.getElementById('appointmentForm').reset();
-    document.getElementById('appointmentFormContainer').classList.remove('hidden');
-    document.getElementById('successMessage').classList.add('hidden');
-    
-    const submitBtn = document.getElementById('submitAppointmentBtn');
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-        </svg>
-        Book Appointment
-    `;
-
-    const doctorSelect = document.getElementById('doctor');
-    doctorSelect.innerHTML = '<option value="">Select doctor</option>';
-    doctorSelect.disabled = true;
+    window.location.reload(); // Simplest way to reset everything
 }
+

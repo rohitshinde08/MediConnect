@@ -33,6 +33,7 @@
 
             <div class="dashboard-header">
                 <div><h1 class="dashboard-title">Manage Doctors</h1><p class="dashboard-subtitle">View and manage doctor account statuses.</p></div>
+                <button class="btn btn-primary" onclick="openAddModal()">Add Doctor</button>
             </div>
 
             <!-- Doctors Table -->
@@ -40,12 +41,56 @@
                 <div class="table-header"><h3 class="table-title">All Doctors</h3><div class="table-filters"><input type="text" class="filter-input" id="searchDoctors" placeholder="Search doctors..." oninput="filterDoctors()"></div></div>
                 <div style="overflow-x:auto;">
                     <table class="data-table">
-                        <thead><tr><th>Name</th><th>Email</th><th>Specialization</th><th>Phone</th><th>Experience</th><th>Status</th><th>Actions</th></tr></thead>
+                        <thead><tr><th>Name</th><th>Email</th><th>Specialization</th><th>Phone</th><th>License</th><th>Status</th><th>Actions</th></tr></thead>
                         <tbody id="doctorsList"></tbody>
                     </table>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Add Doctor Modal -->
+    <div id="addDoctorModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Doctor</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="addDoctorForm" style="padding: var(--space-6);">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="addFullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="addEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="addPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Specialization</label>
+                        <select class="form-select" id="addSpecialization" required>
+                            <option value="">Select</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">License Number</label>
+                        <input type="text" class="form-input" id="addLicense" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" id="addPhone" placeholder="+91 9876543210" pattern="^(\+91[\-\s]?)?[0-9]{10}$" title="Please enter a valid 10-digit Indian phone number, optionally starting with +91">
+                    </div>
+                </div>
+                <div style="margin-top: var(--space-6); display: flex; gap: var(--space-3); justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Doctor</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="/script.js"></script>
@@ -56,7 +101,48 @@
             if (!requireAuth('admin')) return;
             initDashboardSidebar();
             loadDoctors();
+            loadSpecializations();
+
+            document.getElementById('addDoctorForm').addEventListener('submit', handleAddDoctor);
         });
+
+        async function loadSpecializations() {
+            try {
+                const data = await apiGet('/specializations');
+                const select = document.getElementById('addSpecialization');
+                data.specializations.forEach(s => {
+                    select.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                });
+            } catch (e) {}
+        }
+
+        function openAddModal() {
+            document.getElementById('addDoctorModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('addDoctorModal').style.display = 'none';
+            document.getElementById('addDoctorForm').reset();
+        }
+
+        async function handleAddDoctor(e) {
+            e.preventDefault();
+            const payload = {
+                full_name: document.getElementById('addFullName').value,
+                email: document.getElementById('addEmail').value,
+                password: document.getElementById('addPassword').value,
+                specialization_id: parseInt(document.getElementById('addSpecialization').value),
+                license_number: document.getElementById('addLicense').value,
+                phone: document.getElementById('addPhone').value
+            };
+
+            try {
+                await apiPost('/admin/doctors', payload);
+                showToast('Doctor added and approved!', 'success');
+                closeModal();
+                loadDoctors();
+            } catch (error) { showToast(error.message, 'error'); }
+        }
 
         async function loadDoctors() {
             try {
@@ -75,7 +161,7 @@
                     <td>${doc.email}</td>
                     <td>${doc.specialization_name || 'N/A'}</td>
                     <td>${doc.phone || 'N/A'}</td>
-                    <td>${doc.experience_years} yrs</td>
+                    <td>${doc.license_number || 'N/A'}</td>
                     <td>${getStatusBadge(doc.status === 'active' ? 'approved' : 'cancelled')}</td>
                     <td>
                         <div class="table-actions">
@@ -84,9 +170,6 @@
                                     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' :
                                     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
                                 }
-                            </button>
-                            <button class="action-btn cancel" title="Delete" onclick="deleteDoctor(${doc.id})">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                             </button>
                         </div>
                     </td>

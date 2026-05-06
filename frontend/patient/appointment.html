@@ -38,7 +38,7 @@
                             <input type="text" class="form-input" id="patientName" name="patient_name" placeholder="John Doe" required>
                         </div>
 
-                        <!-- Email -->
+                         <!-- Email -->
                         <div class="form-group">
                             <label class="form-label">Email Address <span class="required">*</span></label>
                             <input type="email" class="form-input" id="patientEmail" name="patient_email" placeholder="john@example.com" required>
@@ -47,7 +47,7 @@
                         <!-- Phone -->
                         <div class="form-group">
                             <label class="form-label">Phone Number <span class="required">*</span></label>
-                            <input type="tel" class="form-input" id="patientPhone" name="patient_phone" placeholder="+1 (555) 000-0000" required>
+                            <input type="tel" class="form-input" id="patientPhone" name="patient_phone" placeholder="+91 9876543210" pattern="^(\+91[\-\s]?)?[0-9]{10}$" title="Please enter a valid 10-digit Indian phone number, optionally starting with +91" required>
                         </div>
 
                         <!-- Specialization -->
@@ -69,29 +69,16 @@
                         <!-- Appointment Date -->
                         <div class="form-group">
                             <label class="form-label">Appointment Date <span class="required">*</span></label>
-                            <input type="date" class="form-input" id="appointmentDate" name="appointment_date" required>
+                            <input type="date" class="form-input" id="appointmentDate" name="appointment_date" required disabled>
                         </div>
 
                         <!-- Time Slot -->
                         <div class="form-group">
-                            <label class="form-label">Time Slot <span class="required">*</span></label>
-                            <select class="form-select" id="timeSlot" name="time_slot" required>
-                                <option value="">Select time</option>
-                                <option value="09:00 AM">09:00 AM</option>
-                                <option value="09:30 AM">09:30 AM</option>
-                                <option value="10:00 AM">10:00 AM</option>
-                                <option value="10:30 AM">10:30 AM</option>
-                                <option value="11:00 AM">11:00 AM</option>
-                                <option value="11:30 AM">11:30 AM</option>
-                                <option value="12:00 PM">12:00 PM</option>
-                                <option value="02:00 PM">02:00 PM</option>
-                                <option value="02:30 PM">02:30 PM</option>
-                                <option value="03:00 PM">03:00 PM</option>
-                                <option value="03:30 PM">03:30 PM</option>
-                                <option value="04:00 PM">04:00 PM</option>
-                                <option value="04:30 PM">04:30 PM</option>
-                                <option value="05:00 PM">05:00 PM</option>
+                            <label class="form-label">Available Slots <span class="required">*</span></label>
+                            <select class="form-select" id="timeSlot" name="time_slot" required disabled>
+                                <option value="">Select date first</option>
                             </select>
+                            <small id="slotStatus" style="color: var(--neutral-500); display: block; margin-top: 5px;"></small>
                         </div>
 
                         <!-- Notes -->

@@ -342,8 +342,46 @@ function viewDetails(id) {
     modal.classList.add('open');
     body.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>';
 
-    apiGet(`/appointments/${id}`).then(data => {
+    apiGet(`/appointments/${id}`).then(async data => {
         const apt = data.appointment;
+        const role = getUserRole();
+        
+        let historyHtml = '';
+        if (role === 'doctor') {
+            try {
+                const histData = await apiGet(`/appointments/patient/history?email=${apt.patient_email}&doctor_id=${getUser().id}`);
+                const history = histData.history || [];
+                if (history.length > 0) {
+                    historyHtml = `
+                        <div style="margin-top:var(--space-6); border-top:2px solid var(--neutral-100); padding-top:var(--space-6);">
+                            <h4 style="font-size:var(--text-sm); text-transform:uppercase; color:var(--primary-700); margin-bottom:var(--space-4);">Past Medical History</h4>
+                            <div style="display:flex; flex-direction:column; gap:var(--space-4);">
+                                ${history.map(h => `
+                                    <div style="background:var(--neutral-50); padding:var(--space-4); border-radius:var(--radius-md); border:1px solid var(--neutral-200);">
+                                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                            <span style="font-weight:700; font-size:0.85rem;">${formatDate(h.appointment_date)}</span>
+                                            <span style="font-size:0.75rem; color:var(--neutral-500);">Dr. ${h.doctor_name}</span>
+                                        </div>
+                                        <p style="font-size:0.9rem; color:var(--neutral-800); margin-bottom:8px;"><strong>Diagnosis:</strong> ${h.diagnosis || 'N/A'}</p>
+                                        ${h.prescription ? `<p style="font-size:0.85rem; color:var(--neutral-600); font-style:italic;"><strong>Prescription:</strong> ${h.prescription}</p>` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    historyHtml = `
+                        <div style="margin-top:var(--space-6); border-top:2px solid var(--neutral-100); padding-top:var(--space-6);">
+                            <h4 style="font-size:var(--text-sm); text-transform:uppercase; color:var(--neutral-400); margin-bottom:var(--space-2);">Past Medical History</h4>
+                            <p style="font-size:0.85rem; color:var(--neutral-500);">No past records found for this patient.</p>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                console.error('Failed to load history:', e);
+            }
+        }
+
         body.innerHTML = `
             <div class="modal-detail-view" style="display:flex; flex-direction:column; gap:var(--space-5);">
                 <!-- Header Info -->
@@ -382,33 +420,20 @@ function viewDetails(id) {
                     </div>
                 </div>
 
-                <!-- Doctor Info (If applicable) -->
-                ${apt.doctor_name ? `
-                <div style="padding:var(--space-4); background:var(--neutral-50); border-radius:var(--radius-md); border:1px solid var(--neutral-100);">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4);">
-                        <div>
-                            <label style="font-size:var(--text-xs); color:var(--neutral-500); display:block; margin-bottom:2px;">Doctor</label>
-                            <p style="font-weight:500; font-size:0.9rem;">Dr. ${apt.doctor_name}</p>
-                        </div>
-                        <div>
-                            <label style="font-size:var(--text-xs); color:var(--neutral-500); display:block; margin-bottom:2px;">Specialization</label>
-                            <p style="font-weight:500; font-size:0.9rem;">${apt.specialization_name || 'General'}</p>
-                        </div>
-                    </div>
-                </div>
-                ` : ''}
-
                 <!-- Patient Notes -->
                 <div style="padding-top:var(--space-2);">
-                    <label style="font-size:var(--text-xs); color:var(--neutral-400); text-transform:uppercase; font-weight:600; display:block; margin-bottom:8px;">Patient Notes & Symptoms</label>
-                    <div style="padding:var(--space-4); background:var(--white); border:1px dashed var(--neutral-200); border-radius:var(--radius-md); font-style:italic; color:var(--neutral-600); line-height:1.6;">
-                        ${apt.notes || 'The patient did not provide any specific notes for this appointment.'}
+                    <label style="font-size:var(--text-xs); color:var(--neutral-400); text-transform:uppercase; font-weight:600; display:block; margin-bottom:8px;">Patient Notes</label>
+                    <div style="padding:var(--space-4); background:var(--white); border:1px dashed var(--neutral-200); border-radius:var(--radius-md); font-style:italic; color:var(--neutral-600); font-size:0.9rem;">
+                        ${apt.notes || 'No notes provided.'}
                     </div>
                 </div>
+
+                <!-- History Section (Doctors only) -->
+                ${historyHtml}
 
                 <!-- Actions / Close -->
                 <div style="margin-top:var(--space-4); display:flex; justify-content:flex-end; gap:var(--space-3); padding-top:var(--space-4); border-top:1px solid var(--neutral-100);">
-                    <button class="btn btn-secondary btn-sm" onclick="closeModal()">Close Details</button>
+                    <button class="btn btn-secondary btn-sm" onclick="closeModal()">Close</button>
                 </div>
             </div>
         `;
