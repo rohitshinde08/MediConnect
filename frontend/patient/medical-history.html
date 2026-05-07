@@ -58,6 +58,37 @@
     <div id="footer-placeholder"></div>
     <script src="/script.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (isLoggedIn() && getUserRole() === 'patient') {
+                loadMyHistory();
+            }
+        });
+
+        async function loadMyHistory() {
+            const verificationStep = document.getElementById('verificationStep');
+            const historyTimeline = document.getElementById('historyTimeline');
+            const noHistory = document.getElementById('noHistory');
+            
+            if (verificationStep) verificationStep.classList.add('hidden');
+            
+            try {
+                const user = getUser();
+                const data = await apiGet(`/appointments/patient/history?patient_id=${user.id}`);
+                const history = data.history || [];
+                
+                if (history.length === 0) {
+                    noHistory.classList.remove('hidden');
+                } else {
+                    renderTimeline(history);
+                    historyTimeline.classList.remove('hidden');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+                noHistory.classList.remove('hidden');
+                noHistory.innerHTML = `<p style="color: var(--error-600);">Failed to load history: ${error.message}</p>`;
+            }
+        }
+
         async function fetchHistory() {
             const name = document.getElementById('historyName').value.trim();
             const email = document.getElementById('historyEmail').value.trim();

@@ -28,6 +28,18 @@ async function initAppointmentForm() {
     // Load specializations
     await loadSpecializations();
 
+    // Autofill for logged-in patients
+    if (isLoggedIn() && getUserRole() === 'patient') {
+        const user = getUser();
+        const nameInput = document.getElementById('patientName');
+        const emailInput = document.getElementById('patientEmail');
+        const phoneInput = document.getElementById('patientPhone');
+
+        if (nameInput) { nameInput.value = user.full_name; nameInput.readOnly = true; }
+        if (emailInput) { emailInput.value = user.email; emailInput.readOnly = true; }
+        if (phoneInput) { phoneInput.value = user.phone || ''; phoneInput.readOnly = true; }
+    }
+
 
 
     // When specialization changes, load doctors
@@ -166,6 +178,11 @@ async function handleAppointmentSubmit(e) {
         time_slot: document.getElementById('timeSlot').value,
         notes: document.getElementById('notes').value.trim()
     };
+
+    // Link to patient account if logged in
+    if (isLoggedIn() && getUserRole() === 'patient') {
+        formData.patient_id = getUser().id;
+    }
 
     try {
         const data = await apiPost('/appointments', formData);

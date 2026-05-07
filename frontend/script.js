@@ -56,14 +56,19 @@ function initHeader() {
     if (loginToggle && loginDropdown) {
         if (isLoggedIn()) {
             const role = getUserRole();
-            loginToggle.querySelector('span').textContent = 'My Dashboard';
+            const user = getUser();
+            loginToggle.querySelector('span').textContent = user.full_name.split(' ')[0]; // Show first name
             if (loginMenu) {
+                // Patients don't have a dashboard yet, so we'll link to Book Appointment or Profile
+                const dashboardLink = role === 'patient' ? '/patient/appointment.html' : `/${role}/dashboard.html`;
+                const dashboardText = role === 'patient' ? 'Book Appointment' : 'Dashboard';
+                
                 loginMenu.innerHTML = `
-                    <a href="/${role}/dashboard.html" class="dropdown-item">
+                    <a href="${dashboardLink}" class="dropdown-item">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
                         </svg>
-                        Dashboard
+                        ${dashboardText}
                     </a>
                     <a href="#" onclick="logout(); return false;" class="dropdown-item">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

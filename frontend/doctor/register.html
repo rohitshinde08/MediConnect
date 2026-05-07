@@ -18,6 +18,7 @@
             </div>
 
             <div class="form-container">
+                <!-- Step 1: Doctor Details -->
                 <form id="doctorRegisterForm" enctype="multipart/form-data">
                     <div class="form-grid">
                         <div class="form-group">
@@ -79,9 +80,30 @@
                     </div>
 
                     <div style="margin-top: var(--space-8);">
-                        <button type="submit" class="btn btn-primary btn-block" id="registerBtn">Register Now</button>
+                        <button type="submit" class="btn btn-primary btn-block" id="sendOtpBtn">Send Verification Code</button>
                     </div>
                 </form>
+
+                <!-- Step 2: OTP Verification -->
+                <div id="otpSection" class="hidden" style="margin-top: var(--space-4);">
+                    <div style="text-align: center; margin-bottom: var(--space-6);">
+                        <div style="background: var(--primary-50); color: var(--primary-700); padding: var(--space-4); border-radius: var(--radius-md); font-size: 14px;">
+                            We've sent a 6-digit verification code to your email.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" style="text-align: center; display: block;">Enter Verification Code</label>
+                        <input type="text" class="form-input" id="regOtp" placeholder="123456" maxlength="6" pattern="\d{6}" 
+                               style="text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: 700;">
+                    </div>
+
+                    <div style="margin-top: var(--space-8);">
+                        <button type="button" class="btn btn-primary btn-block" id="verifyBtn">Verify & Submit Application</button>
+                        <button type="button" class="btn btn-block" id="backBtn" style="margin-top: var(--space-3); border: 1px solid var(--gray-200);">Back</button>
+                    </div>
+                </div>
+
                 <div style="margin-top: var(--space-6); text-align: center;">
                     Already have an account? <a href="/doctor/login.html" style="color: var(--primary-600); font-weight: 600;">Login here</a>
                 </div>
@@ -95,6 +117,11 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const specSelect = document.getElementById('regSpecialization');
             const form = document.getElementById('doctorRegisterForm');
+            const otpSection = document.getElementById('otpSection');
+            const sendOtpBtn = document.getElementById('sendOtpBtn');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const backBtn = document.getElementById('backBtn');
+
             // Load specializations
             try {
                 const data = await apiGet('/specializations');
@@ -103,13 +130,36 @@
                 });
             } catch (e) {}
 
-            // Handle Registration
+            // Step 1: Send OTP
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                const email = document.getElementById('regEmail').value.trim();
+                
+                sendOtpBtn.disabled = true;
+                sendOtpBtn.textContent = 'Sending code...';
+
+                try {
+                    await apiPost('/auth/doctor/register-request', { email });
+                    form.classList.add('hidden');
+                    otpSection.classList.remove('hidden');
+                    showToast('Verification code sent!', 'success');
+                } catch (error) {
+                    showToast(error.message, 'error');
+                    sendOtpBtn.disabled = false;
+                    sendOtpBtn.textContent = 'Send Verification Code';
+                }
+            });
+
+            // Step 2: Final Registration
+            verifyBtn.addEventListener('click', async () => {
+                const otp = document.getElementById('regOtp').value.trim();
+                if (!otp) return showToast('Please enter the OTP', 'warning');
+
                 const formData = new FormData(form);
-                const btn = document.getElementById('registerBtn');
-                btn.disabled = true;
-                btn.textContent = 'Registering...';
+                formData.append('otp', otp);
+
+                verifyBtn.disabled = true;
+                verifyBtn.textContent = 'Submitting...';
 
                 try {
                     const response = await fetch('/api/auth/doctor/register', {
@@ -124,9 +174,16 @@
                     setTimeout(() => window.location.href = '/doctor/login.html', 2000);
                 } catch (error) {
                     showToast(error.message, 'error');
-                    btn.disabled = false;
-                    btn.textContent = 'Register Now';
+                    verifyBtn.disabled = false;
+                    verifyBtn.textContent = 'Verify & Submit Application';
                 }
+            });
+
+            backBtn.addEventListener('click', () => {
+                otpSection.classList.add('hidden');
+                form.classList.remove('hidden');
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.textContent = 'Send Verification Code';
             });
         });
     </script>

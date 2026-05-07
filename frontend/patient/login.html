@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Patient Portal Login - MediConnect">
+    <title>Patient Login - MediConnect</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-card">
+            <!-- Back to Home -->
+            <a href="/index.html" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--gray-600); font-weight: 500; font-size: 14px; margin-bottom: var(--space-4); transition: color 0.3s ease;" onmouseover="this.style.color='var(--primary-600)'" onmouseout="this.style.color='var(--gray-600)'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+
+            <!-- Logo -->
+            <div class="logo" style="justify-content: flex-start;">
+                <div class="logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                                 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                                 C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                                 c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Medi<span class="logo-highlight">Connect</span></span>
+            </div>
+
+            <h2 class="portal-title">Patient Portal</h2>
+            <p class="portal-subtitle">Log in to book appointments and track your health</p>
+
+            <!-- Login Form -->
+            <form class="login-form" id="patientLoginForm" autocomplete="off">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <div class="form-input-icon">
+                        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        <input type="email" class="form-input" id="patientEmail" placeholder="you@example.com" autocomplete="off" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="form-input-icon">
+                        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input type="password" class="form-input" id="patientPassword" placeholder="••••••••" autocomplete="new-password" required>
+                    </div>
+                </div>
+
+                <div class="login-extras">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="patientSignInBtn">Sign In</button>
+
+                <p class="register-text mt-6">
+                    Don't have an account? <a href="/patient/register.html">Register here</a>
+                </p>
+            </form>
+
+            <!-- Divider -->
+            <div class="login-divider"><span>Other Portals</span></div>
+
+            <!-- Portal Switch -->
+            <div class="other-portals">
+                <a href="/doctor/login.html" class="portal-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                                 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                                 C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                                 c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    Doctor Login
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+    <script>
+        // Patient Login Handler
+        document.getElementById('patientLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('patientSignInBtn');
+            btn.disabled = true;
+            btn.textContent = 'Signing in...';
+
+            const email = document.getElementById('patientEmail').value.trim();
+            const password = document.getElementById('patientPassword').value;
+
+            try {
+                const data = await apiPost('/auth/patient/login', { email, password });
+
+                // Store auth data
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                localStorage.setItem('role', 'patient');
+
+                showToast('Login successful!', 'success');
+
+                // Redirect to booking page
+                setTimeout(() => {
+                    window.location.href = '/patient/appointment.html';
+                }, 500);
+
+            } catch (error) {
+                showToast(error.message || 'Invalid credentials', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        });
+    </script>
+</body>
+</html>

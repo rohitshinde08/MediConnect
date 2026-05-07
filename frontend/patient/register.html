@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Registration - MediConnect</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .step-hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="page-wrapper">
+        <div class="container" style="max-width: 600px;">
+            <div class="page-header">
+                <div class="badge">Start Your Journey</div>
+                <h1>Patient Registration</h1>
+                <p>Create an account to book and manage your appointments seamlessly.</p>
+            </div>
+
+            <div class="form-container">
+                <!-- Step 1: User Details -->
+                <form id="patientDetailsForm">
+                    <div class="form-grid" style="grid-template-columns: 1fr;">
+                        <div class="form-group">
+                            <label class="form-label">Full Name <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="regFullName" placeholder="John Doe" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address <span class="required">*</span></label>
+                            <input type="email" class="form-input" id="regEmail" placeholder="john@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-input" id="regPhone" placeholder="+91 9876543210">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password <span class="required">*</span></label>
+                            <input type="password" class="form-input" id="regPassword" placeholder="Minimum 6 characters" required minlength="6">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: var(--space-8);">
+                        <button type="submit" class="btn btn-primary btn-block" id="sendOtpBtn">Send Verification Code</button>
+                    </div>
+                </form>
+
+                <!-- Step 2: OTP Verification -->
+                <form id="patientOtpForm" class="step-hidden">
+                    <div style="text-align: center; margin-bottom: var(--space-6);">
+                        <div style="background: var(--primary-50); color: var(--primary-700); padding: var(--space-4); border-radius: var(--radius-md); font-size: 14px;">
+                            We've sent a 6-digit verification code to <strong id="displayEmail"></strong>.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" style="text-align: center; display: block;">Enter Verification Code</label>
+                        <input type="text" class="form-input" id="regOtp" placeholder="123456" maxlength="6" pattern="\d{6}" required 
+                               style="text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: 700;">
+                    </div>
+
+                    <div style="margin-top: var(--space-8);">
+                        <button type="submit" class="btn btn-primary btn-block" id="verifyBtn">Verify & Complete Registration</button>
+                        <button type="button" class="btn btn-block" id="backBtn" style="margin-top: var(--space-3); border: 1px solid var(--gray-200);">Back</button>
+                    </div>
+                </form>
+
+                <div style="margin-top: var(--space-6); text-align: center;">
+                    Already have an account? <a href="/patient/login.html" style="color: var(--primary-600); font-weight: 600;">Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="/script.js"></script>
+    <script>
+        const detailsForm = document.getElementById('patientDetailsForm');
+        const otpForm = document.getElementById('patientOtpForm');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const backBtn = document.getElementById('backBtn');
+
+        let userData = {};
+
+        // Step 1: Send OTP
+        detailsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            userData = {
+                full_name: document.getElementById('regFullName').value.trim(),
+                email: document.getElementById('regEmail').value.trim(),
+                phone: document.getElementById('regPhone').value.trim(),
+                password: document.getElementById('regPassword').value
+            };
+
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.textContent = 'Sending code...';
+
+            try {
+                await apiPost('/auth/patient/register-request', { email: userData.email });
+                
+                // Switch to OTP step
+                document.getElementById('displayEmail').textContent = userData.email;
+                detailsForm.classList.add('step-hidden');
+                otpForm.classList.remove('step-hidden');
+                showToast('Verification code sent!', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.textContent = 'Send Verification Code';
+            }
+        });
+
+        // Step 2: Verify & Complete
+        otpForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const otp = document.getElementById('regOtp').value.trim();
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Verifying...';
+
+            try {
+                await apiPost('/auth/patient/register-verify', { ...userData, otp });
+                showToast('Registration successful! Please login.', 'success');
+                setTimeout(() => window.location.href = '/patient/login.html', 1500);
+            } catch (error) {
+                showToast(error.message, 'error');
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify & Complete Registration';
+            }
+        });
+
+        backBtn.addEventListener('click', () => {
+            otpForm.classList.add('step-hidden');
+            detailsForm.classList.remove('step-hidden');
+            sendOtpBtn.disabled = false;
+            sendOtpBtn.textContent = 'Send Verification Code';
+        });
+    </script>
+</body>
+</html>

@@ -46,6 +46,7 @@ CREATE TABLE doctors (
     experience_years INT DEFAULT 0,
     consultation_fee DECIMAL(10, 2) DEFAULT 0.00,
     bio TEXT,
+    is_verified BOOLEAN DEFAULT FALSE,
     document_path VARCHAR(255),
     verification_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
     status ENUM('active', 'inactive') DEFAULT 'active',
@@ -93,11 +94,39 @@ CREATE TABLE doctor_availability (
 );
 
 
--- 6. Appointments Table
+-- ============================================
+-- 5. Patients Table
+-- ============================================
+CREATE TABLE patients (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    is_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- ============================================
+-- 6. OTP Verification Table
+-- ============================================
+CREATE TABLE otp_verifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(150) NOT NULL,
+    otp_code VARCHAR(6) NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX (email)
+);
+
+-- ============================================
+-- 7. Appointments Table
 -- ============================================
 CREATE TABLE appointments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     appointment_number VARCHAR(20) NOT NULL UNIQUE,
+    patient_id INT DEFAULT NULL,
     patient_name VARCHAR(150) NOT NULL,
     patient_email VARCHAR(150) NOT NULL,
     patient_phone VARCHAR(20) NOT NULL,
@@ -111,6 +140,7 @@ CREATE TABLE appointments (
     prescription TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE SET NULL,
     FOREIGN KEY (doctor_id) REFERENCES doctors(id) ON DELETE SET NULL,
     FOREIGN KEY (specialization_id) REFERENCES specializations(id) ON DELETE SET NULL
 );

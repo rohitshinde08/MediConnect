@@ -8,15 +8,52 @@ const router = express.Router();
 const { pool } = require('../db');
 
 const { sendEmail } = require('../utils/mailer');
+const jwt = require('jsonwebtoken');
+
+// Middleware to verify patient token
+const authenticatePatient = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const token = authHeader.split(' ')[1];
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== 'patient') return res.status(403).json({ error: 'Access denied' });
+        req.user = decoded;
+        next();
+    } catch (err) {
+        return res.status(401).json({ error: 'Invalid token' });
+    }
+};
 
 // ============================================
-// Create Appointment (Patient booking)
+// Get My Appointments (For Logged-in Patient)
+// GET /api/appointments/me
+// ============================================
+router.get('/me', authenticatePatient, async (req, res) => {
+    try {
+        const [rows] = await pool.query(
+            `SELECT a.*, d.full_name AS doctor_name, s.name AS specialization_name
+             FROM appointments a
+             LEFT JOIN doctors d ON a.doctor_id = d.id
+             LEFT JOIN specializations s ON a.specialization_id = s.id
+             WHERE a.patient_id = ?
+             ORDER BY a.appointment_date DESC, a.time_slot ASC`,
+            [req.user.id]
+        );
+        res.json({ appointments: rows });
+    } catch (error) {
+        console.error('Get my appointments error:', error);
+        res.status(500).json({ error: 'Failed to fetch your appointments' });
+    }
+});
 // POST /api/appointments
 // ============================================
 router.post('/', async (req, res) => {
     try {
         const { 
-            patient_name, patient_email, patient_phone, 
+            patient_id, patient_name, patient_email, patient_phone, 
             doctor_id, specialization_id, appointment_date, 
             time_slot, notes 
         } = req.body;
@@ -46,9 +83,9 @@ router.post('/', async (req, res) => {
 
         // Insert appointment
         const [result] = await pool.query(
-            `INSERT INTO appointments (appointment_number, patient_name, patient_email, patient_phone, doctor_id, specialization_id, appointment_date, time_slot, notes)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [appointmentNumber, patient_name, patient_email, patient_phone, doctor_id, specialization_id, appointment_date, time_slot, notes || null]
+            `INSERT INTO appointments (appointment_number, patient_id, patient_name, patient_email, patient_phone, doctor_id, specialization_id, appointment_date, time_slot, notes)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [appointmentNumber, patient_id || null, patient_name, patient_email, patient_phone, doctor_id, specialization_id, appointment_date, time_slot, notes || null]
         );
 
         // Send confirmation email
@@ -232,34 +269,41 @@ router.put('/:id/status', async (req, res) => {
 // ============================================
 router.get('/patient/history', async (req, res) => {
     try {
-        const { email, patientName, doctor_id } = req.query;
-
-        if (!email) {
-            return res.status(400).json({ error: 'Email is required to view history' });
-        }
+        const { email, patientName, doctor_id, patient_id } = req.query;
 
         let query = `
              SELECT a.*, d.full_name AS doctor_name, s.name AS specialization_name
              FROM appointments a
              LEFT JOIN doctors d ON a.doctor_id = d.id
              LEFT JOIN specializations s ON a.specialization_id = s.id
-             WHERE a.patient_email = ? AND a.status = "completed"
+             WHERE a.status = "completed"
         `;
-        const queryParams = [email];
+        const queryParams = [];
 
-        // If not requested by a doctor, strictly require matching patient name for privacy
-        if (!doctor_id) {
-            if (!patientName) {
-                return res.status(400).json({ error: 'Patient name is required to view history' });
+        // If patient_id is provided (logged-in patient), use it directly
+        if (patient_id) {
+            query += ' AND a.patient_id = ?';
+            queryParams.push(patient_id);
+        } 
+        else if (email) {
+            query += ' AND a.patient_email = ?';
+            queryParams.push(email);
+
+            // If not requested by a doctor, strictly require matching patient name for privacy
+            if (!doctor_id) {
+                if (!patientName) {
+                    return res.status(400).json({ error: 'Patient name is required to view history' });
+                }
+                query += ' AND LOWER(a.patient_name) = LOWER(?)';
+                queryParams.push(patientName);
             }
-            query += ' AND LOWER(a.patient_name) = LOWER(?)';
-            queryParams.push(patientName);
+        } else {
+            return res.status(400).json({ error: 'Identification (Email or Patient ID) is required' });
         }
 
         query += ' ORDER BY a.appointment_date DESC';
 
         const [history] = await pool.query(query, queryParams);
-
         res.json({ history });
 
     } catch (error) {
